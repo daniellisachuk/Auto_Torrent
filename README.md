@@ -15,19 +15,19 @@ Test: `python setup.py`
 >IGNORE -- NO SETUP FILE YET
 
 ## Usage
-###For CLI Help
+### For CLI Help
 - automan [-h | --help]
 
-###Adding New Series to Monitor
+### Adding New Series to Monitor
    - automan 'Series Name' add [-d Weekday]
     
-###Downloading an Episode
+### Downloading an Episode
    - Auto
         - automan 'Series Name' get
    - Manual
         - automan 'Series Name' get -s [Season No.] -e [Episode No.]
 
-###Listing all Monitored Series
+### Listing all Monitored Series
    - Regular
        - automan list 
    - Long Listing
