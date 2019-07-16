@@ -60,12 +60,12 @@ Test: `python setup.py`
 ## log
 **version 0.1**
 
-#####1
+##### 1
 > * Implemented `argsparse` to working state
 > * Started implementation of `find_and_download`
 > * Started implementation of `add_to_cron`
 
-#####2
+##### 2
 > * Added `download_season` function
 > * Changed name of `find_and_download` to `download_specific_episode`
 > * Enclosed `argparse` into `resolve_args` function
