@@ -22,10 +22,12 @@ Test: `python setup.py`
 ### Adding New Series to Monitor
    - automan 'Series Name' add -d [Weekday]
     
-### Downloading an Episode
-   - Auto
+### Downloading Seasons & Episodes
+   - Auto Download Next Episode (by DB)
         - automan 'Series Name' get
-   - Manual
+   - Download Complete Season
+        - automan 'Series Name' get -s [Season No.]
+   - Download a Specific Episode
         - automan 'Series Name' get -s [Season No.] -e [Episode No.]
 
 ### Listing all Monitored Series
@@ -38,23 +40,33 @@ Test: `python setup.py`
 
 #### Fully Implemented (?) (TAM-TAM-_TAAAAAAAAAM!!!!_)
 ###### Ver 0.1
-- `argpars`
+- `resolve_args`
 
 ---
 
 #### Started, but Not Fully Implemented
 ###### Ver 0.1
-- `find_and_download`
+- `download_specific_episode`
+- `add_to_cron`
 
 ---
 
 #### Not Implemented
 ###### Ver 0.1
-- `add_to_cron`
 - `list_monitored_series`
+- `download_season`
 - `download_next_episode`
 
 ## log
 **version 0.1**
+
+#####1
 > * Implemented `argsparse` to working state
-> * Started implementation of `find and download`
+> * Started implementation of `find_and_download`
+> * Started implementation of `add_to_cron`
+
+#####2
+> * Added `download_season` function
+> * Changed name of `find_and_download` to `download_specific_episode`
+> * Enclosed `argparse` into `resolve_args` function
+
