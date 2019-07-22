@@ -8,7 +8,7 @@ For My First leisure Project I Thought of an Idea to build a tool to Monitor and
 Daniel Lisachuk, Ariel University
 
 ## Prior Requirements
-- transmission-gtk (Web Client Enabled)
+- transmission (Web Client Enabled)
 
 ## Setup
 Test: `python setup.py`
@@ -17,28 +17,33 @@ Test: `python setup.py`
 ## Usage
 > See Implementation State
 ### For CLI Help
-- automan [-h | --help]
+    automan [-h | --help]
 
 ### Adding New Series to Monitor
-   - automan 'Series Name' add -d [Weekday]
+    automan 'Series Name' add -d [Weekday]
     
 ### Downloading Seasons & Episodes
-   - Auto Download Next Episode (by DB)
-        - automan 'Series Name' get
-   - Download Complete Season
-        - automan 'Series Name' get -s [Season No.]
-   - Download a Specific Episode
-        - automan 'Series Name' get -s [Season No.] -e [Episode No.]
+Auto Download Next Episode (by DB)
+
+     automan 'Series Name' get
+Download Complete Season
+
+     automan 'Series Name' get -s [Season No.]
+Download a Specific Episode
+
+     automan 'Series Name' get -s [Season No.] -e [Episode No.]
 
 ### Listing all Monitored Series
-   - Regular
-       - automan list 
-   - Long Listing
-       - automan list [-l]
+Regular
+
+    automan list
+Long Listing
+
+    automan list [-l]
 
 ## Implementation State
 
-#### Fully Implemented (?) (TAM-TAM-_TAAAAAAAAAM!!!!_)
+#### Functioning State
 ###### Ver 0.1
 - `resolve_args`
 
@@ -56,6 +61,8 @@ Test: `python setup.py`
 - `list_monitored_series`
 - `download_season`
 - `download_next_episode`
+- DB
+- Logging
 
 ## log
 **version 0.1**

@@ -19,11 +19,14 @@ def resolve_args():
         description='Auto Torrent Manager',
         epilog='Created by Daniel Lisachuk as a leisure project / coding challenge'
     )
+
+    # Non Command Flags
     parser.add_argument('-NDBUG',
                         action='store_true',
                         dest='debug',
                         help='Used for DEBUGGING purposes')
     subpursers = parser.add_subparsers(help='Commands')
+
     # The ADD Command
     ADD_parser = subpursers.add_parser('add', help='Add new Series to be Downloaded')
     ADD_parser.add_argument('Series',
@@ -31,6 +34,7 @@ def resolve_args():
     ADD_parser.add_argument('day',
                             choices=('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'),
                             help='Set Day of New Episode Release')
+
     # The GET Command
     GET_parser = subpursers.add_parser('get', help='Download the specified Episode of specified Series')
     GET_parser.add_argument('Series',
@@ -41,6 +45,7 @@ def resolve_args():
                             help='Number of the Season to be Downloaded')
     GET_parser.add_argument('-e', type=int, dest='episode',
                             help='Number of the Episode to be Downloaded')
+
     # The LIST Command
     LIST_parser = subpursers.add_parser('list', help='List all monitored Series')
     LIST_parser.add_argument('-l', dest='long_listing',
@@ -73,14 +78,43 @@ def add_to_cron(series, relese_day):
     new_job.dow.on(relese_day.upper())
 
     if debugging:
-        print(str(new_job))
+        print('new job is {}'.format(str(new_job)))
 
     # TODO implement a add-to-db func and call it here
 
     if debugging:
-        print(str(cron))
+        print('updating cron to:\n{}'.format(str(cron)))
 
     cron.write()
+
+
+'''
+    * open selenium(firefox)/ beautiful soup(browser-less)
+        -go to rarbg with args (will be provided by cron)
+            # format is 'https://rarbgtor.org/torrents.php?search=final+space+s02+e03&category%5B%5D=41'
+            # category = 'TV HD Episodes'
+        
+        /or/
+        
+        -go to pirate bay proxy
+            -go to first proxy option with args (will be provided by cron)
+                # episode format is 'https://pirateproxy.ch/search/final space s01e01 1080p/0/99/200'
+                # season format is 'https://pirateproxy.ch/search/final space season 1 1080p/0/99/200'
+    * form a request using chosen format
+    * Find out if there are any results
+        -if no results
+            - display appropriate massage asking to try manual download
+        -else
+            - find first result + 'click' it
+                - find magnet link/torrent hash/torrent link/(whatever transmissionrpc needs)[find out]
+                ? implement & call new func 'download()' ?
+                - paste it into add_torrent()
+                - configure torrent
+                    # destination folder
+                    # etc... 
+                - start it (in thread?)
+                
+'''
 
 
 def download_next_episode():
@@ -88,14 +122,8 @@ def download_next_episode():
         print("downloading next episode")
 
 
-'''
-    -open selenium(firefox)/ beautiful soup(browser-less)
-    -go to rarbg with args (will be provided by cron)
-        # format is 'https://rarbgtor.org/torrents.php?search=final+space+s02+e03&category%5B%5D=41'
-        # tokenize series argument and form a request separating words with '+' (for token in tokens: ...)
-        ## category = 'TV HD Episodes'
-    -   
-'''
+def download_season(Sreies, season):
+    pass
 
 
 def download_specific_episode(series, season, episode):
@@ -127,8 +155,7 @@ def list_monitored_series(ll):
             print("listing monitored series")
 
 
-def download_season(Sreies, season):
-    pass
+
 
 
 def main():
