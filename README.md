@@ -18,20 +18,31 @@ Test: `python setup.py`
 > See Implementation State
 ### For CLI Help
     automan [-h | --help]
-
-### Adding New Series to Monitor
-    automan 'Series Name' add -d [Weekday]
+    automan add -h
+    automan remove -h
+    automan get -h
+    automan list -h
     
-### Downloading Seasons & Episodes
-Auto Download Next Episode (by DB)
+### Adding New Series to Monitor
+    automan add 'Series Name' 'Weekday'
 
-     automan 'Series Name' get
+### Removing Series From Monitoring List
+Remove Specific Series
+    
+    automan remove 'Series Name'
+Remove All Series
+    
+    automan remove -all
+### Downloading Seasons & Episodes
+Auto Download Next Episode (From DB)
+
+     automan get 'Series Name'
 Download Complete Season
 
-     automan 'Series Name' get -s [Season No.]
+     automan get 'Series Name' -s [Season No.]
 Download a Specific Episode
 
-     automan 'Series Name' get -s [Season No.] -e [Episode No.]
+     automan get 'Series Name' -s [Season No.] -e [Episode No.]
 
 ### Listing all Monitored Series
 Regular
@@ -46,26 +57,27 @@ Long Listing
 #### Functioning State
 ###### Ver 0.1
 - `resolve_args`
+- `add_to_crontab`
+- `add_to_db`
+- `remove_from_crontab`
+- `remove_from_db`
+- `list_monitored_series`
 
 ---
 
 #### Started, but Not Fully Implemented
 ###### Ver 0.1
 - `download_specific_episode`
-- `add_to_cron`
 
 ---
 
 #### Not Implemented
 ###### Ver 0.1
-- `list_monitored_series`
 - `download_season`
 - `download_next_episode`
-- DB
 - Logging
 
-## log
-**version 0.1**
+## Implementation Log
 
 ##### 1
 > * Implemented `argsparse` to working state
@@ -76,4 +88,17 @@ Long Listing
 > * Added `download_season` function
 > * Changed name of `find_and_download` to `download_specific_episode`
 > * Enclosed `argparse` into `resolve_args` function
+
+##### 3
+> * Renamed `add_to_cron` to `add_to_crontab`
+> * Added and implemented `add_to_db`
+> * Added remove command
+> * Added `remove_from_crontab` & `remove_from_db`
+> * Started `remove_from_db`
+> * Added `.gitignore` to ignore local DB file
+
+##### 4
+> * Finished `remove_from_db` (including purge)
+> * Started Implementation of `list` command
+> * Finished Implementation of `list` command
 
