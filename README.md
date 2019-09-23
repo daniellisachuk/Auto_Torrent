@@ -1,6 +1,6 @@
 # Auto_Torrent
 
-**Version 0.1**
+**Version 0.6**
 
 For My First leisure Project I Thought of an Idea to build a tool to Monitor and Automate Series Download via transmission-gtk
 
@@ -43,6 +43,10 @@ Download Complete Season
 Download a Specific Episode
 
      automan get 'Series Name' -s [Season No.] -e [Episode No.]
+     
+### Catching Up to Current Episode
+
+     automan catch-up -s 'Series Name'
 
 ### Listing all Monitored Series
 Regular
@@ -55,7 +59,6 @@ Long Listing
 ## Implementation State
 
 #### Functioning State
-###### Ver 0.1
 - `resolve_args`
 - `add_to_crontab`
 - `add_to_db`
@@ -66,16 +69,19 @@ Long Listing
 ---
 
 #### Started, but Not Fully Implemented
-###### Ver 0.1
 - `download_specific_episode`
+- `search_in_rarbg`
 
 ---
 
 #### Not Implemented
-###### Ver 0.1
 - `download_season`
 - `download_next_episode`
+- `search_sries_info`
+- `search_in_pirate_bay`
 - Logging
+
+---
 
 ## Implementation Log
 
@@ -98,7 +104,20 @@ Long Listing
 > * Added `.gitignore` to ignore local DB file
 
 ##### 4
-> * Finished `remove_from_db` (including purge)
+> * Finished `remove_from_db` & `remove_from_crontab` (including purge)
 > * Started Implementation of `list` command
 > * Finished Implementation of `list` command
 
+##### 5
+> * Added 'target_dir' field in DB
+> * Changed use of 'os' module to 'subprocess' module
+
+##### 6
+> * Added `catch-up` Command to parser
+> * Found Bug in `list` Command
+> * Fixed Bug
+
+##### 7
+> * Started Scraping Implementation
+> * Started Torrent Downloading Implementation
+> * Removed Notes

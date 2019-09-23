@@ -3,83 +3,15 @@
 # requires transmission web client to be active
 # (transmission-gtk -> edit -> preferences -> remote(tab) -> allow remote access(enable))
 
-import os
+import subprocess
 import logging
 import argparse
-import transmissionrpc as trans
+import requests
+import transmissionrpc as transmission
 from tinydb import TinyDB, Query
 from crontab import CronTab
 from tabulate import tabulate
-
-
-# working with tinydb
-#
-# from tinydb import TinyDb, Query
-#
-# db = TinyDb('path/to/db.json')
-# series = db.table('series')
-# Serie = Query()
-#
-# # searching : returns a 'document'
-#
-# result = series.get(Serie.name == 'One Punch Man')
-# will return a DICT representing the object labeled "1" below
-#
-# result = series.search(Serie.name == 'One Punch Man')
-# will return a LIST containing the DICT representing the object labeled "1" below
-#
-# # accsessing fields :
-# result['curr_season'/'curr_episode'/etc...]
-#
-# for list of episodes :
-# result['available_episodes']['1'] will return [1, 2, 3, 4, 5, 6] from below
-#
-# # for writing back to db :
-# resault.doc_id #will return 1 (as int)(num of HIMYM in series)#
-# series.write_back([list, of, changed, results(documents)])
-#
-#
-# dict for db
-# {
-#     'stats:{
-#          '1': {'series_num' : 2}
-#     },
-#     'series' : [
-#         "1": {
-#             'name':'One Punch Man',
-#             'curr_season' : 2,
-#             'curr_episode' : 11,
-#             'next_episode' : Null,
-#             'failed_download_attempts' : 0,
-#             'num_of_available' : 11,
-#             'release_day' : 'mon',
-#             'available_episodes' :
-#             # format:
-#             # {
-#             #   "season num" : [list,of,episodes],
-#             #   "season num" : [list,of,episodes]
-#             # }
-#             {
-#                 "1" : [1, 2, 3, 4, 5, 6],
-#                 "2" : [1, 2, 3, 4, 5]
-#             }
-#         },
-#         "2" : {
-#             'name':'Final Space',
-#             'curr_season': 2,
-#             'curr_episode': 4,
-#             'next_episode': 5,
-#             'failed_download_attempts': 1
-#             'num_of_available' : 4,
-#             'release_day' : 'mon',
-#             'available_episodes' :
-#             {
-#                 "2" : [1, 2, 3, 4]
-#             }
-#
-#         {
-#     ]
-# }
+from bs4 import BeautifulSoup
 
 
 # -----------------------------------------------------Arguments----------------------------------------------------- #
@@ -129,6 +61,13 @@ def resolve_args():
     GET_parser.add_argument('-e', type=int, dest='episode',
                             help='Number of the Episode to be Downloaded')
 
+    # the CATCH-UP Command
+    CU_parser = subpursers.add_parser('catch-up', help='Download the Current Running Season up to Latest Episode')
+    CU_parser.add_argument('-s',
+                           dest='cu_series',
+                           required=True,
+                           help='Name of the Series to be Caught Up (has to be added first)')
+
     # The LIST Command
     LIST_parser = subpursers.add_parser('list', help='List all monitored Series')
     LIST_parser.add_argument('-l', dest='long_listing',
@@ -159,7 +98,8 @@ def add_to_db(series_name, relese_day):
                       'next_episode': 1,
                       'num_of_available': 0,
                       'release_day': relese_day,
-                      'available_episodes': {"1": []}}
+                      'available_episodes': {"1": []},
+                      'target_dir': '~/Series/{}/'.format(series_name.lower())}
 
         series.insert(new_series)
 
@@ -266,33 +206,42 @@ def remove_from_crontab(series, purge):
         print('[+] Series "{}" Is Not Monitored via Cron'.format(series))
 
 
-# * open selenium(firefox)/ beautiful soup(browser-less)
-#     -go to rarbg with args (will be provided by cron)
-#         # format is 'https://rarbgtor.org/torrents.php?search=final+space+s02+e03&category%5B%5D=41'
-#         # category = 'TV HD Episodes'
-#
-#     /or/
-#
-#     -go to pirate bay proxy
-#         -go to first proxy option with args (will be provided by cron or manually)
-#             # episode format is 'https://pirateproxy.ch/search/final space s01e01 1080p/0/99/200'
-#             # season format is 'https://pirateproxy.ch/search/final space season 1 1080p/0/99/200'
-# * form a request using chosen format
-# * Find out if there are any results
-#     -if no results
-#         - display appropriate massage asking to try manual download
-#     -else
-#         - find first result + 'click' it
-#             - find magnet link/torrent hash/torrent link/(whatever transmissionrpc needs)[find out]
-#             ? implement & call new func 'download()' ?
-#             - paste it into add_torrent()
-#             - configure torrent
-#                 # destination folder
-#                 # etc...
-#             - start it (in thread?)
+# ------------------------------------------------------Scraping------------------------------------------------------ #
 
+
+
+
+
+def search_series_info():
+    pass
+
+
+def search_in_pirate_bay():
+    pass
+
+
+def search_in_rarbg(series_name, season, episode):
+    # initial errors
+
+    if not series_name:
+        print('[!] Something Went Horribly Wrong While Entering The Torrent Name')
+        return
+
+    # episode but not season error
+    if series_name and episode and not season:
+        return
+
+    response = requests.get('https://rarbgtor.org/torrents.php?search=final+space+s02+e03&category%5B%5D=41')
+    parser = BeautifulSoup(response.text, 'html.parser')
+    search_results = parser.find_all('div', class_='a')
+
+
+# maybe:
+# def search_in_kat():
+#     pass
 
 # -----------------------------------------------------Downloads----------------------------------------------------- #
+
 
 
 def download_next_episode():
@@ -306,24 +255,11 @@ def download_season(Sreies, season):
 
 
 def download_specific_episode(series, season, episode):
-    if debugging:
-        print("downloading specific episode")
+    pass
 
 
-# # simple way to run transmission in background for http client (needed anyway)
-# # TODO IMPLEMENT BY FORKING
-# # get forked pid
-# # use exec(lv?? [one of them]) to run the command:
-# os.system("transmission-gtk -m")
-#
-# # works
-# client = trans.Client('localhost', port=9091)
-# client.get_torrents()
-#
-# # haven't tried yet
-# client.add_torrent()
-#
-# # TODO KILL FORKED TRANSMISSION-GTK BY PID (AND WAIT FOR IT?[BY PROC.WAIT? BY TIME.SLEEP?])
+def catch_up():
+    pass
 
 
 # --------------------------------------------------------List-------------------------------------------------------- #
@@ -336,54 +272,64 @@ def list_monitored_series(ll):
 
     all_series = series.all()
 
-    # long listing
-    if ll:
-        table = [['Name', 'Release Day', 'Current Season', 'Current Episode', 'Next Episode']]
-        for serie in all_series:
-            serie_cred = [serie['name'].capitalize(), serie['release_day'].capitalize(),
-                          serie['curr_season'], serie['curr_episode'], serie['next_episode']]
-            table.append(serie_cred)
+    if len(all_series) is not 0:
+        # long listing
+        if ll:
+            table = [['Name', 'Release Day', 'Current Season', 'Current Episode', 'Next Episode',
+                      'No. Available Episodes', 'Series Directory']]
+            for serie in all_series:
+                serie_cred = [serie['name'].capitalize(), serie['release_day'].capitalize(),
+                              serie['curr_season'], serie['curr_episode'], serie['next_episode'],
+                              serie['num_of_available'], serie['target_dir']]
+                table.append(serie_cred)
 
-        print(tabulate(table, headers='firstrow', tablefmt='grid',
-                       colalign=('center', 'center', 'center', 'center', 'center')))
+            print(tabulate(table, headers='firstrow', tablefmt='grid',
+                           colalign=('center', 'center', 'center', 'center', 'center', 'center')))
+        # regular
+        else:
+            table = []
+            for serie in all_series:
+                serie_cred = [serie['name'], serie['num_of_available']]
+                table.append(serie_cred)
 
-
-    # regular
+            print(tabulate(table, headers=['Name', 'No. Available Episodes'],
+                           tablefmt='grid', colalign=('center', 'center')))
     else:
-        names = []
-        for serie in all_series:
-            names.append(serie['name'].capitalize())
-
-        print(tabulate({'Name': names}, headers='keys', tablefmt='grid', colalign=('center',)))
+        print('[!] No Series Currently Being Monitored')
 
 
 # --------------------------------------------------------Main-------------------------------------------------------- #
-
+# TODO ~!!~CLEAN(/FILTER) USER INPUT~!!~
 
 def main():
     global debugging
 
     args = resolve_args()
+    args_dict = args.__dict__
 
     # TODO implement logger with basic level
     debugging = True  # TODO WHEN FINISHED CHANGE BACK TO : args.debug
     # debug massage
     if debugging:
-        print(args.__dict__)
+        print(args_dict)
         # TODO set implemented logger to DEBUG level
     # if adding a new series
-    if 'day' in args.__dict__:
+    if 'day' in args_dict:
         add_to_crontab(args.Series.lower(), args.day)
 
     # if removing from db
-    elif 'purge' in args.__dict__:
+    elif 'purge' in args_dict:
         if args.Series is not None:
             remove_from_crontab(args.Series.lower(), args.purge)
         else:
             remove_from_crontab(None, args.purge)
 
+    # if catching up
+    elif 'cu_series' in args_dict:
+        print('catching up')
+
     # if downloading an episode
-    elif 'season' in args.__dict__:
+    elif 'season' in args_dict:
         # if manual input #
         # - if all data is ok -- download specific episode
         if args.episode is not None and args.season is not None:
@@ -399,10 +345,10 @@ def main():
 
         #  - if auto download
         if args.episode is None and args.season is None:
-            download_next_episode(args.Series.lower())  # auto download next episode in line TODO SERIES-SEASON-EPISODE DATABASE
+            download_next_episode(args.Series.lower())  # auto download next episode in line
 
     # if listing all series
-    elif 'long_listing' in args.__dict__:
+    elif 'long_listing' in args_dict:
         list_monitored_series(args.long_listing)
 
     print('Exiting...')
